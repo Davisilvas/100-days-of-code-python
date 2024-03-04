@@ -20,6 +20,13 @@ def draw(number_of_cards):
         x += 1
     return hand
 
+def draw_extra(hand):
+    new_hand = []
+    for x in hand:
+        new_hand.append(x)
+    new_hand.append(random.choice(cards))
+    return new_hand
+
 def sum_cards_on_hand(hand):
     total = 0
     for x in hand:
@@ -32,6 +39,12 @@ def check_for_blackjack(hand):
         has_blackjack = True
     return has_blackjack
 
+def check_for_ace(hand):
+    has_ace = False
+    if 11 in hand:
+        has_ace = True
+    return has_ace
+
 def blackjack_message(hand, player):
     message = f"{player} does not have a blackjack"
     if hand:
@@ -43,18 +56,31 @@ def over_21(hand):
     total = sum_cards_on_hand(hand)
     if total > 21:
         is_over_21 = True
-        if check_for_blackjack(hand):
+        if check_for_ace(hand):
             total -= 10
-            if total > 21:
-                is_over_21 = True
-            else:
+            if total <= 21:
                 is_over_21 = False
     return is_over_21
 
-def under_17(hand, player):
-    new_hand = hand
-    if player == "computer" or player == "pc":
-        total = sum_cards_on_hand(hand)
-        if total < 17:
-            new_hand.append(draw(1))
-    return new_hand
+def under_17(hand):
+    is_under_17 = False
+    total = sum_cards_on_hand(hand)
+    if total < 17:
+        is_under_17 = True
+    return is_under_17
+
+def compare_hands(player_hand, dealer_hand):
+    player_total = sum_cards_on_hand(player_hand)
+    dealer_total = sum_cards_on_hand(dealer_hand)
+
+    result = ''
+
+    if (not over_21(player_hand)) and (not over_21(dealer_hand)):
+        if player_total > dealer_total:
+            result = "Player won."
+        elif dealer_total > player_total:
+            result = "Dealer won."
+        elif player_total == dealer_total:
+            result = "It's a tie."
+    
+    return result
